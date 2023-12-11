@@ -413,13 +413,13 @@ def install_convert2rhel():
         transaction_id = _get_last_yum_transaction_id(c2r_pkg_name)
         return True, transaction_id
 
-    output, returncode = run_subprocess(["/usr/bin/yum", "update", c2r_pkg_name, "-y"])
-    if returncode:
-        raise ProcessError(
-            message="Failed to update convert2rhel RPM.",
-            report="Updating convert2rhel with yum exited with code '%s' and output:\n%s"
-            % (returncode, output.rstrip("\n")),
-        )
+    # output, returncode = run_subprocess(["/usr/bin/yum", "update", c2r_pkg_name, "-y"])
+    # if returncode:
+    #     raise ProcessError(
+    #         message="Failed to update convert2rhel RPM.",
+    #         report="Updating convert2rhel with yum exited with code '%s' and output:\n%s"
+    #         % (returncode, output.rstrip("\n")),
+    #     )
     # NOTE: If we would like to undo update we could use _get_last_yum_transaction_id(c2r_pkg_name)
     return False, None
 
