@@ -436,7 +436,13 @@ def run_convert2rhel():
             "RHC_WORKER_CONVERT2RHEL_DISABLE_TELEMETRY"
         ]
 
-    return run_subprocess(["/usr/bin/convert2rhel", "-y"], env=env)
+    convert_cmd = ["/usr/bin/convert2rhel", "-y"]
+
+    payg = os.environ.get("RHC_WORKER_CONVERT2RHEL_PAYG", "no")
+    if payg == "yes":
+        convert_cmd.append("--payg")
+
+    return run_subprocess(convert_cmd, env=env)
 
 
 def cleanup(required_files):
