@@ -436,6 +436,8 @@ def run_convert2rhel():
             "RHC_WORKER_CONVERT2RHEL_DISABLE_TELEMETRY"
         ]
 
+    env["CONVERT2RHEL_OUTDATED_PACKAGE_CHECK_SKIP"] = "1"
+
     convert_cmd = ["/usr/bin/convert2rhel", "-y"]
 
     payg = os.environ.get("RHC_WORKER_CONVERT2RHEL_PAYG", "no")

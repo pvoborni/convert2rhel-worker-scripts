@@ -13,7 +13,7 @@ def test_run_convert2rhel():
 
     mock_popen.assert_called_once_with(
         ["/usr/bin/convert2rhel", "-y"],
-        env={"PATH": "/fake/path", "CONVERT2RHEL_DISABLE_TELEMETRY": "1"},
+        env={"CONVERT2RHEL_OUTDATED_PACKAGE_CHECK_SKIP": "1", "PATH": "/fake/path", "CONVERT2RHEL_DISABLE_TELEMETRY": "1"},
     )
 
 
@@ -31,7 +31,7 @@ def test_run_convert2rhel_payg():
 
     mock_popen.assert_called_once_with(
         ["/usr/bin/convert2rhel", "-y", "--payg"],
-        env={"PATH": "/fake/path"},
+        env={"CONVERT2RHEL_OUTDATED_PACKAGE_CHECK_SKIP": "1", "PATH": "/fake/path"},
     )
 
 
@@ -49,5 +49,5 @@ def test_run_convert2rhel_nopayg():
 
     mock_popen.assert_called_once_with(
         ["/usr/bin/convert2rhel", "-y"],
-        env={"PATH": "/fake/path"},
+        env={"CONVERT2RHEL_OUTDATED_PACKAGE_CHECK_SKIP": "1", "PATH": "/fake/path"},
     )
