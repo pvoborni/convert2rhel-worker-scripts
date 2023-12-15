@@ -439,6 +439,55 @@ def run_convert2rhel():
     return run_subprocess(["/usr/bin/convert2rhel", "-y"], env=env)
 
 
+def configure_host_metering():
+    """
+    Install, enable and start host-metering on the system.
+
+    When RHC_WORKER_CONVERT2RHEL_PAYG env var is set to "yes".
+
+    Raises ProcessError if any of the steps fails.
+    """
+
+    error_msg = "Conversion succeeded but host-metering configuration failed."
+    payg = os.environ.get("RHC_WORKER_CONVERT2RHEL_PAYG", "no")
+    if payg != "yes":
+        print("Skipping host-metering configuration.")
+        return
+
+    print("Installing host-metering rpms.")
+    output, ret_install = run_subprocess(
+        ["yum", "install", "-y", "host-metering"], True
+    )
+    print("Output of yum call: %s" % output)
+    if ret_install:
+        raise ProcessError(
+            message=error_msg,
+            report="Failed to install host-metering rpms: \n%s\n" % output,
+        )
+
+    print("Enabling host-metering service.")
+    output, ret_enable = run_subprocess(
+        ["systemctl", "enable", "host-metering.service"], True
+    )
+    print("Output of systemctl call: %s" % output)
+    if ret_enable:
+        raise ProcessError(
+            message=error_msg,
+            report="Failed to enable host-metering service: \n%s\n" % output,
+        )
+
+    print("Starting host-metering service.")
+    output, ret_start = run_subprocess(
+        ["systemctl", "start", "host-metering.service"], True
+    )
+    print("Output of systemctl call: %s" % output)
+    if ret_start:
+        raise ProcessError(
+            message=error_msg,
+            report="Failed to start host-metering service: \n%s\n" % output,
+        )
+
+
 def cleanup(required_files):
     """
     Cleanup the downloaded files downloaded in previous steps in this script.
@@ -679,6 +728,9 @@ def main():
                     % (returncode, stdout.rstrip("\n"))
                 ),
             )
+
+        if conversion_successful:
+            configure_host_metering()
 
         # Only call insights to update inventory on successful conversion.
         update_insights_inventory()
